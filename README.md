@@ -1,61 +1,94 @@
-# Home Assistant Climate Group
+# MZ-96 Climate Group Custom
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
-### Groups multiple climate devices to a single entity
+### Groups multiple climate devices into a single controllable entity (Home Assistant 2025+ compatible)
 
-Inspired/copied from Home Assistant component ["Light group"](https://github.com/home-assistant/home-assistant/blob/dev/homeassistant/components/group/light.py)
+This custom integration allows you to group multiple climate devices into a single virtual climate entity, keeping full control over **temperature**, **HVAC modes**, **fan modes**, **swing modes**, and **presets**.  
+It is based on the original `climate_group` component, updated and fixed for **Home Assistant Core 2025.x** (removed deprecated constants, updated API calls, and renamed to avoid conflicts).
 
+---
 
-## Changelog
+## ✨ Features
+- Full support for **Home Assistant 2025+**.
+- Works with **heat**, **cool**, and **off** modes.
+- Supports **fan_mode**, **swing_mode**, and **preset_mode** forwarding to all grouped devices.
+- Aggregates **current temperature** and **target temperature**.
+- Chooses the **most common HVAC mode** when turning on.
+- Allows exclusion of specific preset modes from aggregation.
+- Custom name and unit configuration.
+- Keeps the **same YAML configuration style** as the original climate_group.
 
-### 1.0.7
-- Changed behaviour for Action 'turn on': Use the most common HVAC mode
+---
 
-### 1.0.6
-- Added support for Home Assistant Core Integration Generic turn on and off (thanks to @ladzar)
+## 📜 Changelog
 
-### 1.0.5
-- Patched for Home Assistant core 2024.4.0 (thanks to @lweberru)
+### 2.0.0 (MZ-96 release)
+- Updated for Home Assistant 2025+ (removed deprecated `HVAC_MODE_*` constants, replaced with `HVACMode` enum).
+- Renamed integration folder to `climate_group_custom` to avoid conflicts with older versions.
+- Preserves all features from the original component.
+- Fully compatible with Lovelace `thermostat` and custom cards (e.g., Mushroom).
 
-### 1.0.4
-- Support for new service call `climate.toggle`
+---
 
-### 1.0.3
-- New option: Change target temperature decimal accuracy to .5
+## 📦 Manual Installation
 
-### 1.0.2
-- Minor changes to the behaviour of the states: HVACAction, HVACMode, HVACPresetMode
+1. Download or clone this repository.
+2. Copy the folder: climate_group_custom
+3. into your Home Assistant `config/custom_components` directory.
+3. Restart Home Assistant.
 
-### 1.0.1
-- Forked from [@daenny]((https://github.com/bjrnptrsn/climate_group)) based on 1.0.0-rc6
-- Patched for Home Assistant core 2024.1.0
+---
 
+## ⚙️ Configuration
 
-
-## How to install:
-
-### HACS
-Add this repo **https://github.com/bjrnptrsn/climate_group** to the HACS store and install from there.
-
-### Local installation
-Copy both .py files to folder: ***config/custom_components/climate_group***
-
-## Sample Configuration
-
-Put this inside ***configuration.yaml*** in config folder of hass.io
+Add this to your `configuration.yaml`:
 
 ```yaml
 climate:
-  - platform: climate_group
-    name: 'Climate Friendly Name'
-    temperature_unit: C             # optional: C / F        [default: C]
-    decimal_accuracy_to_half: True  # optional: True / False [default: False]
-    unique_id: [UUID]               # optional: any UUID     [default: None]
-    entities:
-      - climate.clima1
-      - climate.clima2
-      - climate.clima3
-      - climate.heater
-      - climate.termostate
+- platform: climate_group_custom
+ name: "Daikin Main Group"
+ temperature_unit: C             # optional: C / F        [default: C]
+ entities:
+    - climate.clima1
+    - climate.clima2
+    - climate.clima3
+    - climate.clima4
+    - climate.clima5
 ```
+---
+
+## 🖼 Example Lovelace Card
+Here’s a Mushroom-based Lovelace configuration that uses the new group:
+
+```yaml
+ - type: thermostat
+    entity: climate.daikin_main_group
+    features:
+      - type: climate-hvac-modes
+        style: icons
+        hvac_modes:
+          - heat
+          - cool
+          - "off"
+      - style: dropdown
+        type: climate-fan-modes
+        fan_modes:
+          - auto
+          - quiet
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+    show_current_as_primary: true
+    theme: Mushroom
+    name: Daikin Main Group
+```
+
+---
+
+## 📄 Credits
+
+Based on @bjrnptrsn/climate_group and @daenny/climate_group
+
